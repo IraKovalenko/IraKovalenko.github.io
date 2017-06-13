@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contacts</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+</head>
+<body>
+
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <span class="new-contact"><img src="img/user-256.png"></span>
+                    <button type="button" class="btn btn-default navbar-btn">Select few</button>
+                    <h1>Phonebook</h1>
+                    <!--<input type="text" class="form-control" placeholder="Search">-->
+                    <section class="main">
+                        <form class="search" method="post" action="index.html" >
+                            <input type="text" id="search-text" placeholder="Search..." />
+                        </form>
+                    </section>
+                </div>
+            </nav>
+            <div class="contact-list">
+                <ul id="contacts" class="list-group">
+                    <li class="list-group-item visible">
+                        <span class="contact-name">Cras justo odio</span>
+                        <span class="contact-number">+58888 36 13 13</span>
+                        <span class="glyphicon glyphicon-option-horizontal"></span>
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </li>
+                    <li class="list-group-item visible">
+                        <span class="contact-name">AHGVB justo odio</span>
+                        <span class="contact-number">+58 3536 13 131</span>
+                        <span class="glyphicon glyphicon-option-horizontal"></span>
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </li>
+                    <li class="list-group-item visible">
+                        <span class="contact-name">Cras justo odio</span>
+                        <span class="contact-number">+45 00 13 13132</span>
+                        <span class="glyphicon glyphicon-option-horizontal"></span>
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </li>
+                    <li class="list-group-item visible">
+                        <span class="contact-name">Bbdf justo odio</span>
+                        <span class="contact-number">+1336 13 13132</span>
+                        <span class="glyphicon glyphicon-option-horizontal"></span>
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </li>
+                    <span class="empty-item">No contacts!</span>
+                </ul>
+            </div>
+            <div class="list-count"></div>
+        </div>
+    </div>
+    <div class="modal-tab">
+        <form id="contact-modal" data-mode="add" class="card dialog open">
+            <span id="modal_close" class="glyphicon glyphicon-remove"></span>
+            <h2>Add Contact</h2>
+            <div class="i-group">
+                <input name="name" placeholder="Name:" class="name" required>
+                <input name="phone" placeholder="Phone:" class="phone" required>
+                <input name="emailaddress" placeholder="Email:" class="email" type="email">
+                <input name="fb" placeholder="Facebook acc:" class="fb">
+                <input name="skype" placeholder="Skype:" class="skype">
+                <textarea rows="4" cols="50" name="subject" placeholder="Add your comment:" class="message"></textarea>
+                <div class="btn-container">
+                    <span class="btn cancel">Cancel</span>
+                    <span class="btn save">Save</span>
+                </div>
+            </div>
+        </form>
+        <div id="overlay"></div>
+    </div>
+</div>
+
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
