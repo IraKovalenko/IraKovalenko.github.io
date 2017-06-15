@@ -68,6 +68,7 @@ body{
     overflow: auto;
 }
 .list-group-item .glyphicon-remove,
+.list-group-item .glyphicon-pencil,
 .list-group-item .glyphicon-option-horizontal{
     padding: 5px;
     margin-left: 15px;
@@ -75,11 +76,16 @@ body{
     box-shadow: inset 0 0 15px rgba(0,0,0,.5);
 }
 .list-group-item .glyphicon-option-horizontal{
+    background-color: #c5bfbd;
+}
+.list-group-item .glyphicon-pencil{
     background-color: #96D146;
 }
 .list-group-item .glyphicon-remove{
     background-color: #d01212;
 }
+.list-group-item .glyphicon-pencil:hover,
+.list-group-item .glyphicon-pencil:active,
 .list-group-item .glyphicon-option-horizontal:hover,
 .list-group-item .glyphicon-option-horizontal:active,
 .list-group-item .glyphicon-remove:hover,
@@ -142,10 +148,17 @@ input {
     font-family: 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
+input:required:invalid{
+    border-color: red;
+}
+.invalid{
+    border-color: red;
+}
 .search input {
     height: 26px;
     width: 300px;
     padding: 0 12px 0 25px;
+    color: #000;
     background: white url("http://cssdeck.com/uploads/media/items/5/5JuDgOa.png") 8px 6px no-repeat;
     border-width: 1px;
     border-style: solid;
@@ -164,8 +177,6 @@ input {
 }
 .empty{
     display: flex;
-    margin-bottom: 0;
-    height: 100%;
     align-items:center;
 }
 .empty-item {
@@ -199,13 +210,11 @@ input {
 
 /*Modal cards*/
 .card {
-    width: 400px;
-    height: 460px;
     border-radius: 5px;
     background: #eee;
     box-shadow: 10px 20px 20px rgba(0,0,0,0.7), 10px 10px 10px rgba(0,0,0,0.8);
     position: fixed;
-    top: 45%; /* oтступaем сверху 45%, oстaльные 5% пoдвинет скрипт */
+    top: 45%;
     left: 50%;
     transform: translate(-50%,-50%);
     visibility: hidden;
@@ -214,7 +223,19 @@ input {
     opacity: 0;
     transition: opascity 2s;
 }
-.fade-in .card{
+.card[data-mode="add"]{
+    width: 400px;
+    height: 500px;
+}
+.card[data-mode="remove"]{
+    width: 300px;
+    height: 150px;
+}
+.card[data-mode="remove"] .btn-container{
+    align-items: center;
+    height: 50%;
+}
+.fade-in .open{
     opacity: 1;
     visibility: visible;
 }
@@ -286,8 +307,12 @@ input {
     outline-color: #8fc907;
 }
 
-.card :focus::placeholder { color:transparent; }
-
+.card :focus::placeholder {
+    color:transparent;
+}
+.card ::placeholder {
+    font-size: 13px;
+}
 /* Стили для кнопки отправить */
 .card .btn-container{
     display: flex;
@@ -295,36 +320,36 @@ input {
 }
 .card .btn {
     width: 35%;
-    border: 1px solid #253737;
-    background: #416b68;
     border-radius: 6px;
     outline: none;
 }
-.card .btn.save{
+.card .btn.save,
+.card .btn.yes{
     color: #097902;
     background-color: #96D146;
     border: 2px solid #097902;
 }
-.card .btn.cancel{
-    color: #000;
-    background-color: #d01212;
-    border: 2px solid #2b0308;
+.card .btn.clear,
+.card .btn.no{
+    color: #323bbf;
+    background-color: #abc9e2;
+    border: 2px solid #6d90d4;
 }
 
-    /* стиль кнопки при наведении */
-.card .btn:hover {
+.card .btn:hover,
+.card .btn:active{
 box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
-
-/* активная кнопка */
-.card .btn:active {
-    margin-top:1px;
-    border: 1px solid #333333;
-    background: #ffCC00;
-    background-image: -ms-linear-gradient(top, #ffcc00 0%, #ff6600 100%);
-    box-shadow: rgba(255,255,255,0) 0 1px 0, inset rgba(255,255,255,0.7) 0 1px 0;
-    color: #fff;
+.card .btn.clear:active,
+.card .btn.no:active{
+    background-color: #558cb9;
 }
+.card .btn.save:active,
+.card .btn.yes:active{
+    background-color: #66a016;
+}
+
+
 /* конец формы */
 
 /** стили фона затемнения */
