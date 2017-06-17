@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function() {
     var searchField = document.getElementById('search-text');
     var overlay = document.getElementById('overlay');
     var list = document.querySelector('.list-group');
-    var listItem = list.querySelectorAll(".list-group-item");
+    // var listItem = list.querySelectorAll(".list-group-item");
     var contactModal = document.getElementById('contact-modal');
     var modalTab = document.querySelector(".modal-tab");
     var newContactBtn = document.querySelector('.new-contact');
     var clearAllBtn = document.querySelector('.clear');
-    var nameInput = document.querySelector(".name");
-    var numInput = document.querySelector(".phone");
+    var nameInput = document.querySelectorAll(".name");
+    var numInput = document.querySelectorAll(".phone");
     var emailInput = document.querySelector(".email");
     var facebookInput = document.querySelector(".facebook");
     // var skypeInput = document.querySelector(".skype");
@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var infoModal = document.getElementById("info-modal");
     var removeModal = document.getElementById("remove-modal");
     var editModal = document.getElementById("edit-modal");
+    // var selectFew = document.getElementsByClassName('navbar-btn')[0];
 
 
     updateFriendsCounter();
@@ -26,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // searching process
     searchField.onkeyup = function () {
+        var listItem = list.querySelectorAll(".list-group-item");
         var searchTerm = searchField.value;
         var searchSplit = searchTerm.replace(/\+/g, "").replace(/ /g, "");
         listItem.forEach(function (element) {
@@ -41,28 +43,69 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         updateFriendsCounter();
     };
+    // selectFew.onclick = function () {
+    //     selectFew.innerText = 'Delete selected';
+    //     // deleteSelected();
+    //     document.onclick = function (event) {
+    //         if (event.target !== selectFew) {
+    //             selectFew.innerText = 'Select few';}
+    //     };
+    //
+    // };
+    // function deleteSelected() {
+    //     var keys = [];
+    //     list.onclick = function (event) {
+    //         var targ = event.target;
+    //         if (targ.parentElement===listItem){
+    //             targ.parentElement.classList.add('selected');
+    //             keys.push(targ.parentElement.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, ""));
+    //         }
+    //         if (targ === listItem){
+    //             targ.classList.add('selected');
+    //             keys.push(targ.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, ""));
+    //         }
+    //     };
+    //     selectFew.addEventListener('click', function () {
+    //         targ.parentElement.remove();
+    //         for (var key in keys) {
+    //             delete localStorage[key];
+    //         }
+    //     })
+
+    //     [].slice.call(listItem).forEach(function (element) { element.classList.remove('selected'); });
+    //     selectFew.innerText = 'Select few';
+    //     updateFriendsCounter();
+// }
 // end of searching process
 
 // spellchecking of inputs in createNew modal tab
-    nameInput.addEventListener('input', function () {
-        toggleInvalid.call(nameInput);
-    });
-    numInput.addEventListener('input', function () {
-        var re = /[^+?|\d\-() ]/;
-        if (re.test(numInput.value)) {
-            numInput.value = numInput.value.replace(re, '');
-        }
-        toggleInvalid.call(numInput);
-
-    });
-    function toggleInvalid(){
-        if (this.value !== '') {
-            this.classList.remove("invalid");
-        }
-        else{
-            this.classList.add("invalid");
-        }
+    for (var j=0, maxName = nameInput.length; j<maxName;j++) {
+        nameInput[j].addEventListener('input', function () {
+            // toggleInvalid.call(nameInput);
+            if (this.value !== '') {
+                this.classList.remove("invalid");
+            }
+            else {
+                this.classList.add("invalid");
+            }
+        });
     }
+    for (var i=0, maxNum = numInput.length; i<maxNum;i++) {
+        numInput[i].addEventListener('input', function () {
+            var re = /[^+?|\d\-() ]/;
+            if (re.test(this.value)) {
+                this.value = this.value.replace(re, '');
+            }
+            if (this.value !== '') {
+                this.classList.remove("invalid");
+            }
+            else {
+                this.classList.add("invalid");
+            }
+        });
+    }
+
+
     emailInput.addEventListener('input', isValid.bind(emailInput, /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/));
     facebookInput.addEventListener('input', isValid.bind(facebookInput, /(?:http:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/));
     twitterInput.addEventListener('input', isValid.bind(twitterInput, /@([A-Za-z0-9_]{1,15})/i));
@@ -81,12 +124,14 @@ document.addEventListener("DOMContentLoaded", function() {
     newContactBtn.onclick = function () {
         showTab.call(contactModal);
     };
+    // не может найти по измененному ключу
     contactList.onclick = function (event) {
         var targ = event.target;
+        var selectedItem;
         var myKey = targ.parentElement.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, "");
         if (typeof localStorage[myKey] !== "undefined"
             && localStorage[myKey] !== "undefined") {
-            var selectedItem = JSON.parse(localStorage[myKey]);
+            selectedItem = JSON.parse(localStorage[myKey]);
         }
         if (targ.classList.contains('glyphicon-remove')) {
             showTab.call(removeModal);
@@ -102,21 +147,36 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (targ.classList.contains('glyphicon-pencil')) {
             showTab.call(editModal);
+            clearAll();
             for (var key in selectedItem) {
-                editModal.querySelector('.' + key).value = selectedItem[key];
+                if (selectedItem.hasOwnProperty(key)) {
+                    editModal.querySelector('.' + key).value = selectedItem[key];
+                }
             }
             editModal.querySelector('.save').onclick = function () {
                 var myValue = function () {
                     var obj = {};
-                    var children = editModal.querySelector('.i-group').children;
-                    for (var i=0, max = children.length; i<max;i++){
-                        if (children[i].value){
-                            obj[(children[i].className)] = children[i].value;
+                    var iGroup = editModal.querySelector('.i-group');
+                    var newKey = iGroup.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
+                    if(newKey !== myKey){
+                        myKey = newKey;
+                        targ.parentElement.querySelector('.contact-number').textContent = iGroup.querySelector('.phone').value;
+                    }
+                    for (var i=0, max = iGroup.children.length; i<max;i++){
+                        if (iGroup.children[i].value){
+                            obj[(iGroup.children[i].className)] = iGroup.children[i].value;
                         }
                     }
                     return obj;
                 };
-                localStorage.setItem(myKey, JSON.stringify(myValue()));
+                myKey = myValue()['phone'].replace(/ /g, "").replace(/\+/g, "");
+                localStorage[myKey] = JSON.stringify(myValue());
+                if (typeof localStorage[myKey] !== "undefined"
+                    && localStorage[myKey] !== "undefined") {
+                    selectedItem = JSON.parse(localStorage[myKey]);
+                    targ.parentElement.querySelector('.contact-name').textContent = selectedItem['name'];
+                    targ.parentElement.querySelector('.contact-number').textContent = selectedItem['phone'];
+                }
                 hideTab();
             };
             editModal.querySelector('.cancel').onclick = function () {
@@ -128,19 +188,24 @@ document.addEventListener("DOMContentLoaded", function() {
             || targ.classList.contains('glyphicon-option-horizontal')
             || targ.classList.contains('contact-number')) {
             showTab.call(infoModal);
-            for (var key in selectedItem) {
-                infoModal.querySelector('.' + key + '-info').innerText = selectedItem[key];
-                infoModal.querySelector('.' + key + '-info').parentNode.classList.add('visible');
+            selectedItem = JSON.parse(localStorage[myKey]);
+            for (var prop in selectedItem) {
+                if (selectedItem.hasOwnProperty(prop)) {
+                    infoModal.querySelector('.' + prop + '-info').innerText = selectedItem[prop];
+                    infoModal.querySelector('.' + prop + '-info').parentNode.classList.add('visible');
+                }
             }
         }
     };
     document.onkeydown = function (event) {
         if (event.keyCode === 27) {
+            clearAll();
             hideTab();
         }
     };
     modalTab.onclick = function (event) {
         if (event.target === overlay || event.target === document.querySelector('.open .modal-close') ) {
+            clearAll();
             hideTab();
         }
     };
@@ -154,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function() {
         modalTab.classList.remove("fade-in");
         if (tab.getAttribute('data-mode') === "add") {
             tab.classList.remove("open");
-            clearAll();
         }
         if (tab.getAttribute('data-mode') === "info") {
             tab.classList.remove("open");
@@ -168,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var btnSave = contactModal.querySelector('.save');
     btnSave.onclick =  function () {
-        var noInvalidInput = [].slice.call(contactModal.querySelector('.i-group').children).every(element => !element.classList.contains('invalid'));
+        var noInvalidInput = [].slice.call(contactModal.querySelector('.i-group').children).every(elem=> !elem.classList.contains('invalid'));
         if (noInvalidInput) {
             var myKey = contactModal.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
             var myValue = function () {
@@ -181,8 +245,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 return obj;
                 };
-            localStorage.setItem(myKey, JSON.stringify(myValue()));
-            var newItem = JSON.parse(localStorage.getItem(myKey));
+            localStorage[myKey] = JSON.stringify(myValue());
+            var newItem = JSON.parse(localStorage[myKey]);
             var clone = emptyContact.cloneNode(true);
             clone.querySelector(".contact-name").textContent = newItem['name'];
             clone.querySelector(".contact-number").textContent  = newItem['phone'];
@@ -196,9 +260,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     clearAllBtn.onclick = clearAll;
     function clearAll() {
-        [].slice.call(document.getElementsByClassName('i-group')[0].children).forEach(function (elem) {elem.value = null;});
-        modalTab.querySelector('.name').classList.add('invalid');
-        modalTab.querySelector('.phone').classList.add('invalid');
+        if (document.querySelector('.open').getElementsByClassName('i-group')[0]) {
+            var children = document.querySelector('.open').getElementsByClassName('i-group')[0].children;
+            for (var i = 0, max = children.length; i < max; i++) {
+                children[i].value = null;
+            }
+            modalTab.querySelector('.name').classList.add('invalid');
+            modalTab.querySelector('.phone').classList.add('invalid');
+        }
     }
     function updateFriendsCounter(){
         var visibleContacts = document.querySelectorAll('#contacts .visible').length;
