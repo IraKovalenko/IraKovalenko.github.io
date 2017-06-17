@@ -1,14 +1,4 @@
 @keyframes pulsate {0% {opacity: 1;} 50% {opacity:0.5;} 100% {opacity:1;}}
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
-}
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-    }
-}
 html,body {
     height: 100%;
 }
@@ -17,7 +7,6 @@ body{
     background: #333;
     text-shadow: 0 1px 3px rgba(0,0,0,.5);
     text-align: center;
-    /*background-image: linear-gradient(-45deg, #ed7f74, #f1a76a);*/
 }
 .site-wrapper{
     display: table;
@@ -34,6 +23,7 @@ body{
     width: 90%;
     height: 80%;
     display: table;
+    position: relative;
     padding: 30px 20px 10px;
     margin-left: auto;
     margin-right: auto;
@@ -42,7 +32,11 @@ body{
     box-shadow: inset 0 0 36px rgba(43, 43, 43, 0.88);
 }
 .list-count{
-    margin: 5px auto;
+    margin: 15px auto;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
     font-weight: bold;
     font-size: 125%;
     color: #858c7b;
@@ -66,6 +60,9 @@ body{
     width: 100%;
     height: 75%;
     overflow: auto;
+}
+.list-group{
+    margin-bottom: 0;
 }
 .list-group-item .glyphicon-remove,
 .list-group-item .glyphicon-pencil,
@@ -100,10 +97,6 @@ body{
     z-index: 2;
 }
 .contacts li{
-    transition-property: margin, background-color, border-color;
-    transition-duration: 14s, 12s, 12s;
-    transition-timing-function: ease, ease, ease;
-
     float:left;
     clear:left;
     width:100%;
@@ -185,27 +178,16 @@ input:required:invalid{
     padding:0.5em 0.8em;
     font-style:italic;
     border: none;
-    visibility: hidden;
-    opacity: 0;
+    display: none;
     float:left;
     clear:left;
     width:100%;
 }
 .empty .empty-item {
-    opacity: 1;
-    visibility:visible;
+    display: block;
 }
-.empty-item {
-    transition-property: opacity;
-    transition-duration: 0s;
-    transition-delay: 0s;
-    transition-timing-function: ease;
-}
-.empty .empty-item {
-    transition-property: opacity;
-    transition-duration: .2s;
-    transition-delay: .3s;
-    transition-timing-function: ease;
+.empty-contact{
+    display: none;
 }
 
 /*Modal cards*/
@@ -214,16 +196,19 @@ input:required:invalid{
     background: #eee;
     box-shadow: 10px 20px 20px rgba(0,0,0,0.7), 10px 10px 10px rgba(0,0,0,0.8);
     position: fixed;
-    top: 45%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    visibility: hidden;
+    display: none;
     z-index: 5;
-    padding: 20px 10px;
+    padding: 6px 30px;
     opacity: 0;
     transition: opascity 2s;
+    max-height:95%;
+    overflow: auto;
 }
-.card[data-mode="add"]{
+.card[data-mode="add"],
+.card[data-mode="edit"]{
     width: 400px;
     height: 500px;
 }
@@ -237,7 +222,7 @@ input:required:invalid{
 }
 .fade-in .open{
     opacity: 1;
-    visibility: visible;
+    display: block;
 }
 .card h2{
     color: #8fc907;
@@ -273,15 +258,6 @@ input:required:invalid{
     visibility: visible;
     opacity: 0.8;
 }
-
-
-
-
-/* Базовый стиль формы */
-.card {
-    padding: 6px 30px;
-}
-/* общие для полей ввода */
 .card textarea,
 .card input{
     width: 100%;
@@ -292,11 +268,9 @@ input:required:invalid{
     border-radius: 5px;
     color: #555860;
 }
-/* поле сообщения */
 .card textarea{
     overflow:auto;
 }
-/* поля ввода */
 .card input {
     height: 35px;
 }
@@ -313,7 +287,37 @@ input:required:invalid{
 .card ::placeholder {
     font-size: 13px;
 }
-/* Стили для кнопки отправить */
+.card[data-mode=info]{
+    width: 70%;
+}
+.card[data-mode=info] .row{
+    display: none;
+}
+.card[data-mode=info] .row.visible{
+    display: table-row;
+}
+.card[data-mode=info] h2{
+    margin-top: 10px;
+}
+.table-user-information{
+    margin: 20px 0;
+    color: #333;
+}
+.table-user-information .icon img{
+    height: 35px;
+}
+.card[data-mode=info] .table-user-information td{
+    vertical-align: middle;
+}
+.table-user-information td:last-child{
+    font-size: 125%;
+}
+.table-user-information .row .comment-info{
+    font-size: 110%;
+}
+/*end modal tabs*/
+
+/* Styles for btns*/
 .card .btn-container{
     display: flex;
     justify-content: space-around;
@@ -329,27 +333,63 @@ input:required:invalid{
     background-color: #96D146;
     border: 2px solid #097902;
 }
-.card .btn.clear,
-.card .btn.no{
-    color: #323bbf;
-    background-color: #abc9e2;
-    border: 2px solid #6d90d4;
+.card .btn.clear{
+    color: #355188;
+    background-color: #6bb5f3;
+    border: 2px solid #355188;
 }
-
+.card .btn.cancel,
+.card .btn.no{
+    color: #5d0707;
+    background-color: #e62525;
+    border: 2px solid #5d0707;
+}
 .card .btn:hover,
 .card .btn:active{
 box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
-.card .btn.clear:active,
-.card .btn.no:active{
+.card .btn.clear:active{
     background-color: #558cb9;
+}
+.card .btn.cancel:active,
+.card .btn.no:active{
+    background-color: #af0e0e;
 }
 .card .btn.save:active,
 .card .btn.yes:active{
     background-color: #66a016;
 }
+/*end styles for btns*/
 
 
-/* конец формы */
-
-/** стили фона затемнения */
+@media screen and (max-width: 900px) {
+    .navbar{
+        margin-bottom: 10px;
+    }
+    .container-fluid{
+        flex-wrap: wrap;
+        padding-bottom: 15px;
+    }
+    .new-contact{
+        order: 1;
+    }
+    .container-fluid h1{
+        order: 2;
+    }
+    .navbar-btn{
+        order: 3;
+    }
+    .search{
+        width: 100%;
+        order: 4;
+    }
+    .search input{
+        width: 70%;
+    }
+    .contact-list{
+        height: 73%;
+    }
+    .list-count{
+        margin:5px auto;
+    }
+}

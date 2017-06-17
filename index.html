@@ -19,12 +19,9 @@
                     <span class="new-contact"><img src="img/user-256.png"></span>
                     <button type="button" class="btn btn-default navbar-btn">Select few</button>
                     <h1>Phonebook</h1>
-                    <!--<input type="text" class="form-control" placeholder="Search">-->
-                    <section class="main">
-                        <form class="search" method="post" action="index.html" >
-                            <input type="text" id="search-text" placeholder="Search..." />
-                        </form>
-                    </section>
+                    <form class="search" method="post" action="index.html" >
+                        <input type="text" id="search-text" placeholder="Search..." />
+                    </form>
                 </div>
             </nav>
             <div class="contact-list">
@@ -147,18 +144,27 @@
             <div class="list-count"></div>
         </div>
     </div>
+    <div class="empty-contact">
+        <li class="list-group-item visible">
+            <span class="contact-name"></span>
+            <span class="contact-number"></span>
+            <span class="glyphicon glyphicon-option-horizontal"></span>
+            <span class="glyphicon glyphicon-pencil"></span>
+            <span class="glyphicon glyphicon-remove"></span>
+        </li>
+    </div>
     <div class="modal-tab">
         <form id="contact-modal" data-mode="add" class="card">
             <span class="glyphicon glyphicon-remove modal-close"></span>
             <h2>Add Contact</h2>
             <div class="i-group">
-                <input name="name" placeholder="Name:" class="name" required>
-                <input name="phone" placeholder="Phone:" class="phone" required>
+                <input name="name" placeholder="Name:" class="name invalid">
+                <input name="phone" placeholder="Phone:" class="phone invalid">
                 <input name="emailaddress" placeholder="Email:" class="email" >
-                <input name="fb" placeholder="Facebook acc:" class="fb">
+                <input name="facebook" placeholder="Facebook acc:" class="facebook">
                 <input name="skype" placeholder="Skype:" class="skype">
                 <input name="twitter" placeholder="Twitter:" class="twitter">
-                <textarea rows="4" cols="50" name="subject" placeholder="Add your comment:" class="message"></textarea>
+                <textarea rows="4" cols="50" name="subject" placeholder="Add your comment:" class="comment"></textarea>
             </div>
             <div class="btn-container">
                 <span class="btn clear">Clear all</span>
@@ -175,19 +181,57 @@
         </div>
         <div id="edit-modal" data-mode="edit" class="card">
             <span class="glyphicon glyphicon-remove modal-close"></span>
-            <h2>Edit</h2>
+            <h2>Edit contact:</h2>
+            <div class="i-group">
+                <input name="name" placeholder="Name:" class="name" required>
+                <input name="phone" placeholder="Phone:" class="phone" required>
+                <input name="emailaddress" placeholder="Email:" class="email" >
+                <input name="facebook" placeholder="Facebook acc:" class="facebook">
+                <input name="skype" placeholder="Skype:" class="skype">
+                <input name="twitter" placeholder="Twitter:" class="twitter">
+                <textarea rows="4" cols="50" name="subject" placeholder="Add your comment:" class="comment"></textarea>
+            </div>
             <div class="btn-container">
-                <span class="btn no">No</span>
-                <span class="btn yes">Yes</span>
+                <span class="btn cancel">Cancel</span>
+                <span class="btn save">Save</span>
             </div>
         </div>
         <div id="info-modal" data-mode="info" class="card">
             <span class="glyphicon glyphicon-remove modal-close"></span>
-            <h2>Info</h2>
-            <div class="btn-container">
-                <span class="btn no">No</span>
-                <span class="btn yes">Yes</span>
-            </div>
+            <h2>Contact's details:</h2>
+            <table class="table table-user-information">
+                <tbody>
+                <tr class="row">
+                    <td><span class="name-icon icon"><img src="img/user.png"></span><br>Name:</td>
+                    <td class="name-info"></td>
+                </tr>
+                <tr class="row">
+                    <td><span class="phone-icon icon"><img src="img/facebook_hello_300.png"></span><br>Phone:</td>
+                    <td class="phone-info"></td>
+                </tr>
+                <tr class="row">
+                    <td><span class="email-icon icon"><img src="img/mail.png"></span><br>Email:</td>
+                    <td class="email-info"></td>
+                </tr>
+                <tr class="row">
+                    <td><span class="facebook-icon icon"><img src="img/facebook.svg"></span><br>Facebook:</td>
+                    <td class="facebook-info"></td>
+                </tr>
+                <tr class="row">
+                    <td><span class="skype-icon icon"><img src="img/skype.png"></span><br>Skype:</td>
+                    <td class="skype-info"></td>
+                </tr>
+                <tr class="row">
+                    <td><span class="twitter-icon icon"><img src="img/twitter.svg"></span><br>Twitter</td>
+                    <td class="twitter-info"></td>
+                </tr>
+                <tr class="row">
+                <td><span class="comment-icon icon"><img src="img/comment-discussion.png"></span><br>Comment:</td>
+                <td class="comment-info"></td>
+                </tr>
+
+                </tbody>
+            </table>
         </div>
         <div id="overlay"></div>
     </div>
