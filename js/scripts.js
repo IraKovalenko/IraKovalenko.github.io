@@ -3,24 +3,45 @@ document.addEventListener("DOMContentLoaded", function() {
     var searchField = document.getElementById('search-text');
     var overlay = document.getElementById('overlay');
     var list = document.querySelector('.list-group');
-    // var listItem = list.querySelectorAll(".list-group-item");
     var contactModal = document.getElementById('contact-modal');
     var modalTab = document.querySelector(".modal-tab");
     var newContactBtn = document.querySelector('.new-contact');
     var clearAllBtn = document.querySelector('.clear');
     var nameInput = document.querySelectorAll(".name");
     var numInput = document.querySelectorAll(".phone");
-    var emailInput = document.querySelector(".email");
-    var facebookInput = document.querySelector(".facebook");
-    // var skypeInput = document.querySelector(".skype");
-    var twitterInput = document.querySelector(".twitter");
-    // var commentInput = document.querySelector(".comment");
+    var emailInput = document.querySelectorAll(".email");
+    var facebookInput = document.querySelectorAll(".facebook");
+    var twitterInput = document.querySelectorAll(".twitter");
     var contactList = document.querySelector('.contact-list');
     var infoModal = document.getElementById("info-modal");
     var removeModal = document.getElementById("remove-modal");
     var editModal = document.getElementById("edit-modal");
-    // var selectFew = document.getElementsByClassName('navbar-btn')[0];
 
+    var keys = [];
+    if (typeof localStorage['keys'] !== "undefined"
+        && localStorage['keys'] !== "undefined") {
+        var oldKeys = JSON.parse(localStorage['keys']);
+        for (var i = 0, max = oldKeys.length; i < max; i++) {
+            keys.push(oldKeys[i]);
+        }
+    }
+    function createList() {
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        for (var i = 0, max = keys.length; i < max; i++) {
+            // console.log(typeof localStorage[keys[0][i+3]]);
+            if (typeof localStorage[keys[i]] !== "undefined"
+                && localStorage[keys[i]] !== "undefined") {
+                var newItem = JSON.parse(localStorage[keys[i]]);
+                var clone = emptyContact.cloneNode(true);
+                clone.querySelector(".contact-name").textContent = newItem['name'];
+                clone.querySelector(".contact-number").textContent = newItem['phone'];
+                list.insertBefore(clone, list.firstChild);
+            }
+        }
+    }
+    createList();
 
     updateFriendsCounter();
 
@@ -43,45 +64,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         updateFriendsCounter();
     };
-    // selectFew.onclick = function () {
-    //     selectFew.innerText = 'Delete selected';
-    //     // deleteSelected();
-    //     document.onclick = function (event) {
-    //         if (event.target !== selectFew) {
-    //             selectFew.innerText = 'Select few';}
-    //     };
-    //
-    // };
-    // function deleteSelected() {
-    //     var keys = [];
-    //     list.onclick = function (event) {
-    //         var targ = event.target;
-    //         if (targ.parentElement===listItem){
-    //             targ.parentElement.classList.add('selected');
-    //             keys.push(targ.parentElement.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, ""));
-    //         }
-    //         if (targ === listItem){
-    //             targ.classList.add('selected');
-    //             keys.push(targ.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, ""));
-    //         }
-    //     };
-    //     selectFew.addEventListener('click', function () {
-    //         targ.parentElement.remove();
-    //         for (var key in keys) {
-    //             delete localStorage[key];
-    //         }
-    //     })
-
-    //     [].slice.call(listItem).forEach(function (element) { element.classList.remove('selected'); });
-    //     selectFew.innerText = 'Select few';
-    //     updateFriendsCounter();
-// }
 // end of searching process
 
 // spellchecking of inputs in createNew modal tab
     for (var j=0, maxName = nameInput.length; j<maxName;j++) {
         nameInput[j].addEventListener('input', function () {
-            // toggleInvalid.call(nameInput);
             if (this.value !== '') {
                 this.classList.remove("invalid");
             }
@@ -89,9 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.classList.add("invalid");
             }
         });
-    }
-    for (var i=0, maxNum = numInput.length; i<maxNum;i++) {
-        numInput[i].addEventListener('input', function () {
+        numInput[j].addEventListener('input', function () {
             var re = /[^+?|\d\-() ]/;
             if (re.test(this.value)) {
                 this.value = this.value.replace(re, '');
@@ -103,19 +88,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.classList.add("invalid");
             }
         });
-    }
-
-
-    emailInput.addEventListener('input', isValid.bind(emailInput, /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/));
-    facebookInput.addEventListener('input', isValid.bind(facebookInput, /(?:http:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/));
-    twitterInput.addEventListener('input', isValid.bind(twitterInput, /@([A-Za-z0-9_]{1,15})/i));
-    function isValid(reg) {
-        var valid = reg.test(this.value);
-        if (!valid && this.value !== '') {
-            this.classList.add("invalid");
-        }
-        else{
-            this.classList.remove("invalid");
+        emailInput[j].addEventListener('input', isValid.bind(emailInput[j], /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/));
+        facebookInput[j].addEventListener('input', isValid.bind(facebookInput[j], /(?:http:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[\w\-]*\/)*([\w\-]*)/));
+        twitterInput[j].addEventListener('input', isValid.bind(twitterInput[j], /@([A-Za-z0-9_]{1,15})/i));
+        function isValid(reg) {
+            var valid = reg.test(this.value);
+            if (!valid && this.value !== '') {
+                this.classList.add("invalid");
+            }
+            else {
+                this.classList.remove("invalid");
+            }
         }
     }
 //end of spellchecking
@@ -124,11 +107,11 @@ document.addEventListener("DOMContentLoaded", function() {
     newContactBtn.onclick = function () {
         showTab.call(contactModal);
     };
-    // не может найти по измененному ключу
     contactList.onclick = function (event) {
         var targ = event.target;
         var selectedItem;
         var myKey = targ.parentElement.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, "");
+
         if (typeof localStorage[myKey] !== "undefined"
             && localStorage[myKey] !== "undefined") {
             selectedItem = JSON.parse(localStorage[myKey]);
@@ -137,7 +120,10 @@ document.addEventListener("DOMContentLoaded", function() {
             showTab.call(removeModal);
             removeModal.querySelector('.yes').onclick = function () {
                 targ.parentElement.remove();
-                delete localStorage[key];
+                keys.forEach(function (element, index, arr) { if (element === myKey) arr.splice(index, 1) });
+                localStorage['keys'] = JSON.stringify(keys);
+                delete localStorage[myKey];
+                createList();
                 hideTab();
                 updateFriendsCounter();
             };
@@ -159,7 +145,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     var iGroup = editModal.querySelector('.i-group');
                     var newKey = iGroup.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
                     if(newKey !== myKey){
+                        keys.forEach(function (element, index, arr) { if (element === myKey) arr.splice(index, 1, newKey); });
                         myKey = newKey;
+                        localStorage['keys'] = JSON.stringify(keys);
                         targ.parentElement.querySelector('.contact-number').textContent = iGroup.querySelector('.phone').value;
                     }
                     for (var i=0, max = iGroup.children.length; i<max;i++){
@@ -246,11 +234,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 return obj;
                 };
             localStorage[myKey] = JSON.stringify(myValue());
-            var newItem = JSON.parse(localStorage[myKey]);
-            var clone = emptyContact.cloneNode(true);
-            clone.querySelector(".contact-name").textContent = newItem['name'];
-            clone.querySelector(".contact-number").textContent  = newItem['phone'];
-            list.insertBefore(clone, list.firstChild);
+            keys.push(myKey);
+            localStorage['keys'] = JSON.stringify(keys);
+            // var newItem = JSON.parse(localStorage[myKey]);
+            // var clone = emptyContact.cloneNode(true);
+            // clone.querySelector(".contact-name").textContent = newItem['name'];
+            // clone.querySelector(".contact-number").textContent  = newItem['phone'];
+            // list.insertBefore(clone, list.firstChild);
+            createList();
             updateFriendsCounter();
             clearAll();
             hideTab();
