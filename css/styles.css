@@ -291,6 +291,25 @@ input:required:invalid{
 .card[data-mode=info]{
     width: 70%;
 }
+.card[data-mode=rewrite]{
+    width: 30%;
+    z-index: 6;
+}
+.card[data-mode=remove]{
+    z-index: 6;
+}
+.card[data-mode=rewrite] h2{
+    font-size: 21px;
+    color: #333;
+    text-shadow: none;
+}
+.card[data-mode=rewrite] .btn-container{
+    margin-bottom: 5px;
+}
+.card[data-mode=rewrite] .btn{
+    padding: 4px 12px;
+    width: 45%;
+}
 .card[data-mode=info] .row{
     display: none;
 }

@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var infoModal = document.getElementById("info-modal");
     var removeModal = document.getElementById("remove-modal");
     var editModal = document.getElementById("edit-modal");
+    var rewriteModal = document.getElementById("rewrite-modal");
 
     var keys = [];
     if (typeof localStorage['keys'] !== "undefined"
@@ -74,8 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
         nameInput[j].addEventListener('input', function () {
             if (this.value !== '') {
                 this.classList.remove("invalid");
-            }
-            else {
+            } else {
                 this.classList.add("invalid");
             }
         });
@@ -86,8 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             if (this.value !== '') {
                 this.classList.remove("invalid");
-            }
-            else {
+            } else {
                 this.classList.add("invalid");
             }
         });
@@ -98,8 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var valid = reg.test(this.value);
             if (!valid && this.value !== '') {
                 this.classList.add("invalid");
-            }
-            else {
+            } else {
                 this.classList.remove("invalid");
             }
         }
@@ -114,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
     contactList.onclick = function (event) {
         var targ = event.target;
         var selectedItem;
-        var myKey = targ.parentElement.querySelector('.contact-number').innerText.replace(/ /g, "").replace(/\+/g, "");
+        var myKey = targ.parentElement.querySelector('.contact-number').textContent.replace(/ /g, "").replace(/\+/g, "");
 
         if (typeof localStorage[myKey] !== "undefined"
             && localStorage[myKey] !== "undefined") {
@@ -124,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function() {
             showTab.call(removeModal);
             removeModal.querySelector('.yes').onclick = function () {
                 targ.parentElement.remove();
-
                 keys.forEach(function (element, index, arr) { if (element === myKey) arr.splice(index, 1) });
                 localStorage['keys'] = JSON.stringify(keys);
                 delete localStorage[myKey];
@@ -139,39 +136,74 @@ document.addEventListener("DOMContentLoaded", function() {
         if (targ.classList.contains('glyphicon-pencil')) {
             showTab.call(editModal);
             nameInput[1].focus();
-            clearAll();
+            // clearAll();
             for (var key in selectedItem) {
                 if (selectedItem.hasOwnProperty(key)) {
                     editModal.querySelector('.' + key).value = selectedItem[key];
                 }
             }
             editModal.querySelector('.save').onclick = function () {
-                var myValue = function () {
+                var iGroup = editModal.querySelector('.i-group');
+                var newKey = iGroup.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
+                var getValue = function () {
                     var obj = {};
-                    var iGroup = editModal.querySelector('.i-group');
-                    var newKey = iGroup.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
-                    if(newKey !== myKey){
-                        keys.forEach(function (element, index, arr) { if (element === myKey) arr.splice(index, 1, newKey); });
-                        myKey = newKey;
-                        localStorage['keys'] = JSON.stringify(keys);
-                        targ.parentElement.querySelector('.contact-number').textContent = iGroup.querySelector('.phone').value;
-                    }
-                    for (var i=0, max = iGroup.children.length; i<max;i++){
-                        if (iGroup.children[i].value){
+                    for (var i = 0, max = iGroup.children.length; i < max; i++) {
+                        if (iGroup.children[i].value) {
                             obj[(iGroup.children[i].className)] = iGroup.children[i].value;
                         }
                     }
                     return obj;
                 };
-                myKey = myValue()['phone'].replace(/ /g, "").replace(/\+/g, "");
-                localStorage[myKey] = JSON.stringify(myValue());
-                if (typeof localStorage[myKey] !== "undefined"
-                    && localStorage[myKey] !== "undefined") {
-                    selectedItem = JSON.parse(localStorage[myKey]);
-                    targ.parentElement.querySelector('.contact-name').textContent = selectedItem['name'];
-                    targ.parentElement.querySelector('.contact-number').textContent = selectedItem['phone'];
+                if (newKey !== myKey) {
+                    if (keys.indexOf(newKey) !== -1) {
+                        showTab.call(rewriteModal);
+                        rewriteModal.querySelector('.yes').onclick = function () {
+                            delete localStorage[myKey];
+                            delete localStorage[newKey];
+
+                            keys.forEach(function (element, index, arr) {
+                                if (element === myKey) arr.splice(index, 1);
+                            });
+                            localStorage['keys'] = JSON.stringify(keys);
+                            localStorage[newKey] = JSON.stringify(getValue());
+                            [].slice.call(list.children).forEach(function (element) {
+                                if (element.querySelector('.contact-number').textContent === newKey) {
+                                    element.querySelector('.contact-name').textContent = editModal.querySelector('.name').value;
+                                } else if (element.querySelector('.contact-number').textContent === myKey) {
+                                    element.remove();
+                                }
+                            });
+                            createList();
+                            hideTab();
+                            hideTab();
+                        };
+                        rewriteModal.querySelector('.no').onclick = function () {
+                            hideTab();
+                            hideTab();
+                        };
+                    } else {
+                        targ.parentElement.remove();
+                        keys.forEach(function (element, index, arr) {
+                            if (element === myKey) arr.splice(index, 1, newKey);
+                        });
+                        delete localStorage[myKey];
+                        localStorage['keys'] = JSON.stringify(keys);
+                        localStorage[newKey] = JSON.stringify(getValue());
+                        targ.parentElement.querySelector('.contact-number').textContent = iGroup.querySelector('.phone').value;
+                        createList();
+                        hideTab();
+                    }
+                } else {
+                    localStorage[myKey] = JSON.stringify(getValue());
+
+                    if (typeof localStorage[myKey] !== "undefined"
+                        && localStorage[myKey] !== "undefined") {
+                        selectedItem = JSON.parse(localStorage[myKey]);
+                        targ.parentElement.querySelector('.contact-name').textContent = selectedItem['name'];
+                        targ.parentElement.querySelector('.contact-number').textContent = selectedItem['phone'];
+                    }
+                    hideTab();
                 }
-                hideTab();
             };
             editModal.querySelector('.cancel').onclick = function () {
                 hideTab();
@@ -185,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function() {
             selectedItem = JSON.parse(localStorage[myKey]);
             for (var prop in selectedItem) {
                 if (selectedItem.hasOwnProperty(prop)) {
-                    infoModal.querySelector('.' + prop + '-info').innerText = selectedItem[prop];
+                    infoModal.querySelector('.' + prop + '-info').textContent = selectedItem[prop];
                     infoModal.querySelector('.' + prop + '-info').parentNode.classList.add('visible');
                 }
             }
@@ -193,34 +225,32 @@ document.addEventListener("DOMContentLoaded", function() {
     };
     document.onkeydown = function (event) {
         if (event.keyCode === 27) {
-            clearAll();
+            // clearAll();
             hideTab();
         }
     };
     modalTab.onclick = function (event) {
         if (event.target === overlay || event.target === document.querySelector('.open .modal-close') ) {
-            clearAll();
+            // clearAll();
             hideTab();
         }
     };
     function showTab() {
         modalTab.classList.add("fade-in");
+        console.log(this, this.classList);
         this.classList.add("open");
         event.stopPropagation();
     }
     function hideTab(){
         var tab = document.querySelector('.open');
         modalTab.classList.remove("fade-in");
-        if (tab.getAttribute('data-mode') === "add") {
-            tab.classList.remove("open");
+        if (tab.getAttribute('data-mode') === "add" || tab.getAttribute('data-mode') === "edit" ) {
+            clearAll();
         }
         if (tab.getAttribute('data-mode') === "info") {
-            tab.classList.remove("open");
-            [].slice.call(infoModal.querySelectorAll('.row td:last-child')).forEach(function (element) { element.innerText = ''; element.parentNode.classList.remove('visible')});
+            [].slice.call(infoModal.querySelectorAll('.row td:last-child')).forEach(function (element) { element.textContent = ''; element.parentNode.classList.remove('visible')});
         }
-        else{
-            tab.classList.remove("open");
-        }
+        tab.classList.remove("open");
     }
 // end of showing and hiding modal tabs
 
@@ -229,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var noInvalidInput = [].slice.call(contactModal.querySelector('.i-group').children).every(elem=> !elem.classList.contains('invalid'));
         if (noInvalidInput) {
             var myKey = contactModal.querySelector('.phone').value.replace(/ /g, "").replace(/\+/g, "");
-            var myValue = function () {
+            var getValue = function () {
                 var obj = {};
                 var children = contactModal.querySelector('.i-group').children;
                 for (var i=0, max = children.length; i<max;i++){
@@ -239,18 +269,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 return obj;
                 };
-            localStorage[myKey] = JSON.stringify(myValue());
-            keys.push(myKey);
-            localStorage['keys'] = JSON.stringify(keys);
-            // var newItem = JSON.parse(localStorage[myKey]);
-            // var clone = emptyContact.cloneNode(true);
-            // clone.querySelector(".contact-name").textContent = newItem['name'];
-            // clone.querySelector(".contact-number").textContent  = newItem['phone'];
-            // list.insertBefore(clone, list.firstChild);
-            createList();
-            updateFriendsCounter();
-            clearAll();
-            hideTab();
+            if (keys.indexOf(myKey) !== -1) {
+                showTab.call(rewriteModal);
+                rewriteModal.querySelector('.yes').onclick = function () {
+                    localStorage[myKey] = JSON.stringify(getValue());
+                    [].slice.call(list.children).forEach(function (element) {
+                        if (element.querySelector('.contact-number').textContent === myKey) {
+                            console.log(contactModal.querySelector('.name'), contactModal.querySelector('.name').value);
+                            element.querySelector('.contact-name').textContent = contactModal.querySelector('.name').value;
+                        }
+                    });
+                    hideTab();
+                    hideTab();
+                };
+                rewriteModal.querySelector('.no').onclick = function () {
+                    hideTab();
+                    hideTab();
+                };
+            } else {
+                localStorage[myKey] = JSON.stringify(getValue());
+                keys.push(myKey);
+                localStorage['keys'] = JSON.stringify(keys);
+                createList();
+                updateFriendsCounter();
+                hideTab();
+            }
         }
     };
 
@@ -271,16 +314,14 @@ document.addEventListener("DOMContentLoaded", function() {
         var friendsCounter = document.querySelector(".list-count");
         if (visibleContacts === 1){
             contactList.classList.remove('empty');
-            friendsCounter.innerText = visibleContacts + ' friend';
-        }
-        else if(visibleContacts === 0){
+            friendsCounter.textContent = visibleContacts + ' friend';
+        } else if(visibleContacts === 0){
             // shows empty state text when no contacts found
             contactList.classList.add('empty');
-            friendsCounter.innerText = "";
-        }
-        else {
+            friendsCounter.textContent = "";
+        } else {
             contactList.classList.remove('empty');
-            friendsCounter.innerText = visibleContacts + ' friends';
+            friendsCounter.textContent = visibleContacts + ' friends';
         }
     }
 });
