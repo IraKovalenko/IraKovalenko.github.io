@@ -300,6 +300,9 @@ input:required:invalid{
 .card[data-mode=info] h2{
     margin-top: 10px;
 }
+.card[data-mode=info] .comment-info{
+    word-break: break-word;
+}
 .table-user-information{
     margin: 20px 0;
     color: #333;

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+
     var emptyContact = document.getElementsByClassName("empty-contact")[0].children[0];
     var searchField = document.getElementById('search-text');
     var overlay = document.getElementById('overlay');
@@ -47,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // searching process
+
     searchField.onkeyup = function () {
         var listItem = list.querySelectorAll(".list-group-item");
         var searchTerm = searchField.value;
@@ -67,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
 // end of searching process
 
 // spellchecking of inputs in createNew modal tab
+
     for (var j=0, maxName = nameInput.length; j<maxName;j++) {
         nameInput[j].addEventListener('input', function () {
             if (this.value !== '') {
@@ -106,6 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
 // showing and hiding modal tabs
     newContactBtn.onclick = function () {
         showTab.call(contactModal);
+        nameInput[0].focus();
     };
     contactList.onclick = function (event) {
         var targ = event.target;
@@ -120,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
             showTab.call(removeModal);
             removeModal.querySelector('.yes').onclick = function () {
                 targ.parentElement.remove();
+
                 keys.forEach(function (element, index, arr) { if (element === myKey) arr.splice(index, 1) });
                 localStorage['keys'] = JSON.stringify(keys);
                 delete localStorage[myKey];
@@ -133,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (targ.classList.contains('glyphicon-pencil')) {
             showTab.call(editModal);
+            nameInput[1].focus();
             clearAll();
             for (var key in selectedItem) {
                 if (selectedItem.hasOwnProperty(key)) {
